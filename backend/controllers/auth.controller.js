@@ -1,5 +1,6 @@
+const { exists } = require("../models/User");
 const auth = require("../services/auth.service");
-
+const { verify } = require("../utils/crypto");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -15,3 +16,12 @@ exports.signup = async (req, res, next) => {
   }
 };
 
+exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await auth.login(email, password);
+    return res.status(201).json(user);
+  } catch (e) {
+    next(e);
+  }
+};
