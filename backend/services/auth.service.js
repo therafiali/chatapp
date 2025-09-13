@@ -1,4 +1,5 @@
 const { hash, verify } = require("../utils/crypto");
+const { generateTokens } = require("../utils/jwt");
 const users = require("./user.service");
 
 exports.signup = async (name, email, password) => {
@@ -22,5 +23,10 @@ exports.login = async (email, password) => {
 
   if (!isVerified) return "invalid_password";
 
-  return "Verified";
+  const tokens = generateTokens(exist);
+
+  return {
+    success: true,
+    tokens,
+  };
 };
