@@ -1,6 +1,4 @@
-const { exists } = require("../models/User");
 const auth = require("../services/auth.service");
-const { verify } = require("../utils/crypto");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -20,7 +18,21 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await auth.login(email, password);
-    return res.status(201).json(user);
+
+    if (user.error === "invalid_email") {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (user.error === "invalid_password") {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    return res.status(200).json({
+      message: "Login successfull",
+      user: user.user,
+      accessToken: user.tokens.accessToken,
+      refreshToken: user.tokens.refreshToken,
+    });
   } catch (e) {
     next(e);
   }
