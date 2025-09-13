@@ -1,4 +1,5 @@
 const auth = require("../services/auth.service");
+const { clearAuthCookies, setAuthCookies } = require("../utils/cookies");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -27,12 +28,26 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
+    setAuthCookies(res, user.tokens);
+
     return res.status(200).json({
       message: "Login successfull",
       user: user.user,
       accessToken: user.tokens.accessToken,
       refreshToken: user.tokens.refreshToken,
     });
+  } catch (e) {
+    next(e);
+  }
+};
+
+
+exports.logout = async (req, res, next) => {
+  try {
+    // Clear authentication cookies using modular approach
+    clearAuthCookies(res);
+    
+    return res.status(200).json({ message: "Logout successful" });
   } catch (e) {
     next(e);
   }

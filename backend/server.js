@@ -6,6 +6,7 @@ const connectDB = require("./database");
 const authRoutes = require("./routes/auth.routes");
 const usersRoutes = require("./routes/users.routes");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 
 const port = 3001;
 
@@ -16,6 +17,7 @@ const app = express();
 
 app.use(helmet());
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: "*",

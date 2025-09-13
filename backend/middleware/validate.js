@@ -29,3 +29,4 @@ exports.signupSchema = z.object({
     password: z.string().min(8),
   }),
 });
+
