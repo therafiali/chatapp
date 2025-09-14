@@ -1,6 +1,6 @@
 const { hash, verify } = require("../utils/crypto");
 const { generateTokens } = require("../utils/jwt");
-const { deleteRefreshToken, create } = require("./refreshToken.service");
+const { deleteRefreshToken, create, createWithTokens } = require("./refreshToken.service");
 const users = require("./user.service");
 
 exports.signup = async (name, email, password) => {
@@ -24,11 +24,9 @@ exports.login = async (email, password) => {
 
   if (!isVerified) return "invalid_password";
 
-  const tokens = generateTokens(exist);
-
   await deleteRefreshToken(exist._id);
 
-  await create(exist._id, tokens.refreshToken);
+  const tokens = await createWithTokens(exist);
 
   return {
     success: true,
