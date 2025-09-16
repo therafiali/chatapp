@@ -1,5 +1,6 @@
 "use client";
 
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { socket } from "@/lib/socket";
 import { useEffect, useState } from "react";
 
@@ -24,6 +25,7 @@ export default function Home() {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <div>
         <input
@@ -47,5 +49,6 @@ export default function Home() {
         </ul>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }

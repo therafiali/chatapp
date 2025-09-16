@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 
 const port = 3001;
+const allowedOrigin = "http://localhost:3000";
 
 // connect to MongoDB
 connectDB();
@@ -20,8 +21,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "*",
+    origin: allowedOrigin,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -32,8 +35,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["*"],
+    origin: allowedOrigin,
+    credentials: true,
+    methods: ["GET", "POST"],
   },
 });
 
