@@ -1,5 +1,15 @@
+const User = require("../models/User");
 const auth = require("../services/auth.service");
-const { clearAuthCookies, setAuthCookies } = require("../utils/cookies");
+const {
+  deleteRefreshToken,
+  createWithTokens,
+} = require("../services/refreshToken.service");
+const {
+  clearAuthCookies,
+  setAuthCookies,
+  getTokenFromCookie,
+} = require("../utils/cookies");
+const { verifyRefreshToken } = require("../utils/jwt");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -41,14 +51,43 @@ exports.login = async (req, res, next) => {
   }
 };
 
-
 exports.logout = async (req, res, next) => {
   try {
     // Clear authentication cookies using modular approach
     clearAuthCookies(res);
-    
+
     return res.status(200).json({ message: "Logout successful" });
   } catch (e) {
     next(e);
+  }
+};
+
+exports.refresh = async (req, res, next) => {
+  try {
+    const refreshToken = getTokenFromCookie(req, "refreshToken");
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token" });
+    }
+
+    const decoded = verifyRefreshToken(refreshToken);
+
+    // Use your service (recommended)
+    // const user = await require("../services/user.service").findByEmail(decoded.email);
+
+    // Or use the model directly if it has no static helper:
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    await deleteRefreshToken(user._id);
+    const tokens = await createWithTokens(user); // { accessToken, refreshToken }
+
+    setAuthCookies(res, tokens);
+
+    // IMPORTANT: return the new access token for the frontend interceptor
+    return res.status(200).json({ accessToken: tokens.accessToken });
+  } catch (e) {
+    return res.status(401).json({ message: "Session expired, please login again" });
   }
 };

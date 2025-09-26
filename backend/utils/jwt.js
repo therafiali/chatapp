@@ -7,7 +7,7 @@ const JWT_CONFIG = {
   refreshTokenSecret:
     process.env.JWT_REFRESH_SECRET ||
     "your-super-secret-refresh-key-change-in-production",
-  accessTokenExpiry: process.env.JWT_ACCESS_EXPIRY || "15m",
+  accessTokenExpiry: process.env.JWT_ACCESS_EXPIRY || "1m",
   refreshTokenExpiry: process.env.JWT_REFRESH_EXPIRY || "7d",
 };
 
