@@ -11,9 +11,7 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getCurrentUser = async (req, res, next) => {
   try {
-    console.log('req',req)
-    
-    const user = user_service.findByEmail(req.email);
+    const user = await user_service.findByEmail(req.user.email);
     return res.status(201).json(user);
   } catch (e) {
     next(e);

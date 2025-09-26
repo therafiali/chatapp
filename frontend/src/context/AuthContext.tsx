@@ -41,7 +41,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(userData);
         } catch (error) {
           console.error("Failed to get current user:", error);
-          localStorage.removeItem("accessToken");
         }
       }
       setIsLoading(false);
@@ -50,9 +49,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initAuth();
   }, []);
 
+console.log('isAuth',isAuthenticated, 'loading', isLoading, 'user', user)
+
   const login = async (email: string, password: string) => {
     const response = await authService.login({ email, password });
-    setUser(response.user);
+    console.log('login response',response)
+    try {
+      const me = await authService.getCurrentUser();
+      setUser(me);
+    } catch (e) {
+      console.error('Failed to fetch current user after login', e);
+    }
   };
 
   const signup = async (name: string, email: string, password: string) => {

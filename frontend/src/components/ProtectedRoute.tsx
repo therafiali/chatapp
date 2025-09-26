@@ -10,14 +10,14 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
-console.log('isAuth', isAuthenticated, "isLoading", isLoading)
-  // useEffect(() => {
-  //   if (!isLoading && !isAuthenticated) {
-  //     router.push("login");
-  //   }
-  // }, [isAuthenticated, isLoading, router]);
+console.log('isAuth', isAuthenticated, "isLoading", isLoading , user)
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   if (isLoading) {
     return (
