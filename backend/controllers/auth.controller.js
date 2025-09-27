@@ -71,10 +71,6 @@ exports.refresh = async (req, res, next) => {
 
     const decoded = verifyRefreshToken(refreshToken);
 
-    // Use your service (recommended)
-    // const user = await require("../services/user.service").findByEmail(decoded.email);
-
-    // Or use the model directly if it has no static helper:
     const user = await User.findOne({ email: decoded.email });
     if (!user) {
       return res.status(401).json({ message: "User not found" });
@@ -85,7 +81,6 @@ exports.refresh = async (req, res, next) => {
 
     setAuthCookies(res, tokens);
 
-    // IMPORTANT: return the new access token for the frontend interceptor
     return res.status(200).json({ accessToken: tokens.accessToken });
   } catch (e) {
     return res.status(401).json({ message: "Session expired, please login again" });
