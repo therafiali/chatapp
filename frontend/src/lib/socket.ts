@@ -1,5 +1,29 @@
-import { io } from "socket.io-client";
+// utils/socket.ts
+import { io, Socket } from "socket.io-client";
 
-export const socket = io("localhost:3001", {
-  autoConnect: false,
-});
+let socket: Socket | null = null;
+
+export const getSocket = () => {
+  if (!socket) {
+    if (typeof window !== "undefined") {
+      socket = io("http://localhost:3001", {
+        autoConnect: false,
+        auth: {
+          token: localStorage.getItem("accessToken"),
+        },
+      });
+
+      // 🔑 reconnect automatically on reload
+      socket.on("connect_error", (err) => {
+        console.error("Socket connect error:", err.message);
+      });
+    }
+  }
+
+  // Always make sure socket is connected
+  if (socket && !socket.connected) {
+    socket.connect();
+  }
+
+  return socket;
+};
